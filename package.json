@@ -1,0 +1,19 @@
+{
+  "name": "nuga-the-sam-server",
+  "version": "1.0.0",
+  "description": "nuga the sam server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codestates/nuga-the-sam-server.git"
+  },
+  "author": "jekim,sleepybird",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/codestates/nuga-the-sam-server/issues"
+  },
+  "homepage": "https://github.com/codestates/nuga-the-sam-server#readme"
+}
