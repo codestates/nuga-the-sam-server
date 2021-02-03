@@ -1,19 +1,31 @@
 {
-  "name": "nuga-the-sam-server",
-  "version": "1.0.0",
-  "description": "nuga the sam server",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/codestates/nuga-the-sam-server.git"
-  },
-  "author": "jekim,sleepybird",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/codestates/nuga-the-sam-server/issues"
-  },
-  "homepage": "https://github.com/codestates/nuga-the-sam-server#readme"
+	"name": "nuga-the-sam-server",
+	"version": "1.0.0",
+	"description": "nuga the sam server",
+	"main": "index.js",
+	"scripts": {
+		"test": "nodemon index.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/codestates/nuga-the-sam-server.git"
+	},
+	"author": "jekim,sleepybird",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/codestates/nuga-the-sam-server/issues"
+	},
+	"homepage": "https://github.com/codestates/nuga-the-sam-server#readme",
+	"dependencies": {
+		"cors": "^2.8.5",
+		"dotenv": "^8.2.0",
+		"express": "^4.17.1",
+		"jsonwebtoken": "^8.5.1",
+		"morgan": "^1.10.0",
+		"mysql2": "^2.2.5",
+		"sequelize": "^6.5.0"
+	},
+	"devDependencies": {
+		"sequelize-cli": "^6.2.0"
+	}
 }
