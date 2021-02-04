@@ -20,7 +20,7 @@ module.exports = {
 	//GET/fights/category/:category
 	get_category: async (req, res) => {
 		const results = await fight.findAll({
-			where: { category: req.params.category },
+			where: { category: decodeURI(req.params.category) },
 		});
 		res.send(results);
 	},
