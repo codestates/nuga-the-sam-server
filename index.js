@@ -2,9 +2,11 @@ const express = require("express");
 const server = express();
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const router = require("./router");
+const main = require("./router");
 const morgan = require("morgan");
-const fight = require("./router/fight");
+const fight_and_comment_router = require("./router/fightAndComment");
+const user_router = require("./router/user");
+
 const PORT = 4000;
 
 //server기준으로 html위치 선정
@@ -18,8 +20,12 @@ server.use(bodyParser.json());
 
 server.use(morgan("dev"));
 
-server.use("/", router);
-server.use("/fights", fight);
+//api 메인페이지
+server.use("/", main);
+//fight와 댓글 라우터
+server.use("/fights", fight_and_comment_router);
+//user라우터
+server.use("/users", user_router);
 
 server.listen(PORT, () => {
 	console.log("server on 4000");
