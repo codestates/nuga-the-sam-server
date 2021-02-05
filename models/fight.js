@@ -29,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
 			right: DataTypes.STRING,
 			left_vote_count: { type: DataTypes.INTEGER, defaultValue: 0 },
 			right_vote_count: DataTypes.INTEGER,
+			visits: { type: DataTypes.INTEGER, defaultValue: 0 },
 		},
 		{
 			sequelize,
