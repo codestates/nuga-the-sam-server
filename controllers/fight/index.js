@@ -1,5 +1,6 @@
 const { fight } = require("../../models");
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 module.exports = {
 	get_fights: async (req, res) => {
@@ -9,7 +10,33 @@ module.exports = {
 	//새로운 fight 작성
 	//POST/ fights
 	post_fight: async (req, res) => {
-		res.send();
+		const { left, right } = req.body;
+		if (left && right) {
+			if (req.headers.authorization) {
+				const accessToken = req.headers.authorization.split(" ")[1];
+				jwt.verify(
+					accessToken,
+					process.env.ACCESS_SECRET,
+					async (err, decoded) => {
+						if (err) {
+							res.status(403).json({ message: "invalid input" });
+						} else {
+							const user_id = decoded.id;
+							const newFight = await fight.create({
+								user_id,
+								left,
+								right,
+							});
+							res.status(201).json(newFight);
+						}
+					},
+				);
+			} else {
+				res.status(403).json({ message: "invalid input" });
+			}
+		} else {
+			res.status(400).json({ message: "invalid input" });
+		}
 	},
 	//url 파라미터를 받아서 특정 fight만 보내줌
 	//GET/fights/:fight_id
