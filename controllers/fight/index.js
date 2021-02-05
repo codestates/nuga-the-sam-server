@@ -10,7 +10,7 @@ module.exports = {
 	//새로운 fight 작성
 	//POST/ fights
 	post_fight: async (req, res) => {
-		const { left, right } = req.body;
+		const { left, right, category } = req.body;
 		if (left && right) {
 			if (req.headers.authorization) {
 				const accessToken = req.headers.authorization.split(" ")[1];
@@ -26,6 +26,7 @@ module.exports = {
 								user_id,
 								left,
 								right,
+								category,
 							});
 							res.status(201).json(newFight);
 						}
