@@ -27,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
 			text: DataTypes.STRING,
 			like_count: { type: DataTypes.INTEGER, defaultValue: 0 },
 			dislike_count: { type: DataTypes.INTEGER, defaultValue: 0 },
+			side: DataTypes.STRING,
 		},
 		{
 			sequelize,
