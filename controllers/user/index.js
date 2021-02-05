@@ -89,11 +89,23 @@ module.exports = {
 	//이메일 중복확인
 	//POST /users/signup/checkemail
 	check_email: async (req, res) => {
-		res.send();
+		const check = await user.findOne({ where: { email: req.body.email } });
+		if (check) {
+			res.status(400).json({ message: "already exist email" });
+		} else {
+			res.status(200).end();
+		}
 	},
 	//닉네임 중복황인
 	//POST /users/signup/checknick
 	check_nick: async (req, res) => {
-		res.send();
+		const check = await user.findOne({
+			where: { nickname: req.body.nickname },
+		});
+		if (check) {
+			res.status(400).json({ message: "already exist nickname" });
+		} else {
+			res.status(200).end();
+		}
 	},
 };
