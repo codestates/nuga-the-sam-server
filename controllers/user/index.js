@@ -63,7 +63,7 @@ module.exports = {
 						expiresIn: "1h",
 					},
 				);
-				res.json({ token });
+				res.json({ token, nickname: user.nickname });
 			} else {
 				res.status(404).json({ message: "not found" });
 			}

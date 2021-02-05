@@ -15,7 +15,16 @@ server.set("views", "router");
 server.set("view engine", "ejs");
 server.engine("html", require("ejs").renderFile);
 
-server.use(cors());
+server.use(
+	cors({
+		origin: [
+			"http://127.0.0.1:3000",
+			"http://localhost:3000",
+			"https://www.nugathesam.com",
+		],
+		methods: ["GET", "POST", "PUT", "OPTIONS"],
+	}),
+);
 server.use(bodyParser.json());
 
 server.use(morgan("dev"));
