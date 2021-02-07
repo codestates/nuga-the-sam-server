@@ -81,6 +81,7 @@ module.exports = {
 	//POST /users/social
 	social: async (req, res) => {
 		//authorizationCode를 OAuth서버에다가 줘서 accessToken을 받아온다.
+		console.log(req.body, "fasdfas");
 		const resultViaOAuthToken = await axios.post(
 			`https://www.googleapis.com/oauth2/v4/token`,
 			{
