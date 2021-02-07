@@ -81,70 +81,83 @@ module.exports = {
 	//POST /users/social
 	social: async (req, res) => {
 		//authorizationCode를 OAuth서버에다가 줘서 accessToken을 받아온다.
-		const resultViaOAuthToken = await axios.post(
-			`https://www.googleapis.com/oauth2/v4/token`,
-			{
-				client_id:
-					"103482969021-9v5buae9qqmjb71n9geuprb73fe1c013.apps.googleusercontent.com",
-				client_secret: process.env.CLIENT_SECRET,
-				code: req.body.authorizationCode,
-				grant_type: "authorization_code",
-				redirect_uri: "http://localhost:3000/login",
-			},
-			{
-				Accept: "application/json",
-				"Content-Type": "application/json",
-			},
-		);
-		//Access토큰을토대로 api서버에 유저의 데이터를요청을한다.
-		const resultViaApi = await axios.get(
-			"https://www.googleapis.com/oauth2/v2/userinfo",
-			{
-				headers: {
-					Authorization: `Bearer ${resultViaOAuthToken.data.accecc_token}`,
-				},
-			},
-		);
-		//데이터베이스에서 data의 이메일과 social이 true인값이 있으면,
-		const resultViaFindUser = await user.findOne({
-			where: { email: resultViaApi.data.email, is_social: true },
-		});
-		if (resultViaFindUser) {
-			//그에 해당하는 데이터를 뽑아서 토큰으로 만들어서 전달해준다.
-			const token = jwt.sign(
+		try {
+			const resultViaOAuthToken = await axios.post(
+				`https://www.googleapis.com/oauth2/v4/token`,
 				{
-					id: resultViaFindUser.id,
-					nickname: resultViaFindUser.nickname,
-					email: resultViaFindUser.email,
+					client_id:
+						"103482969021-9v5buae9qqmjb71n9geuprb73fe1c013.apps.googleusercontent.com",
+					client_secret: process.env.CLIENT_SECRET,
+					code: req.body.authorizationCode,
+					grant_type: "authorization_code",
+					redirect_uri: "http://localhost:3000/login",
 				},
-				process.env.ACCESS_SECRET,
 				{
-					expiresIn: "1h",
+					Accept: "application/json",
+					"Content-Type": "application/json",
 				},
 			);
-			res.json({ token, nickname: resultViaFindUser.nickname });
-			//없으면
-		} else {
-			//받아온 데이터를 기준으로 user테이블에 social true로 데이터에 등록한후,
-			const resultViaCreateUser = await user.create({
-				email,
-				is_social: true,
+			console.log(1);
+			//Access토큰을토대로 api서버에 유저의 데이터를요청을한다.
+			const resultViaApi = await axios.get(
+				"https://www.googleapis.com/oauth2/v2/userinfo",
+				{
+					headers: {
+						Authorization: `Bearer ${resultViaOAuthToken.data.accecc_token}`,
+					},
+				},
+			);
+			console.log(2);
+			//데이터베이스에서 data의 이메일과 social이 true인값이 있으면,
+			const resultViaFindUser = await user.findOne({
+				where: { email: resultViaApi.data.email, is_social: true },
 			});
-			resultViaCreateUser.nickname = `Guest${resultViaCreateUser.id}`;
-			await resultViaCreateUser.save();
-			//가입시킨 데이터를 기준으로 토큰을 만들어서 전달해준다.
-			const token = jwt.sign(
-				{
-					id: resultViaCreateUser.id,
-					nickname: resultViaCreateUser.nickname,
-					email: resultViaCreateUser.email,
-				},
-				process.env.ACCESS_SECRET,
-				{
-					expiresIn: "1h",
-				},
-			);
-			res.status(201).json({ token, nickname: resultViaCreateUser.nickname });
+			console.log(3);
+			if (resultViaFindUser) {
+				console.log(4);
+				//그에 해당하는 데이터를 뽑아서 토큰으로 만들어서 전달해준다.
+				const token = jwt.sign(
+					{
+						id: resultViaFindUser.id,
+						nickname: resultViaFindUser.nickname,
+						email: resultViaFindUser.email,
+					},
+					process.env.ACCESS_SECRET,
+					{
+						expiresIn: "1h",
+					},
+				);
+				console.log(5);
+				res.json({ token, nickname: resultViaFindUser.nickname });
+				//없으면
+			} else {
+				//받아온 데이터를 기준으로 user테이블에 social true로 데이터에 등록한후,
+				console.log(6);
+				const resultViaCreateUser = await user.create({
+					email,
+					is_social: true,
+				});
+				console.log(7);
+				resultViaCreateUser.nickname = `Guest${resultViaCreateUser.id}`;
+				await resultViaCreateUser.save();
+				//가입시킨 데이터를 기준으로 토큰을 만들어서 전달해준다.
+				const token = jwt.sign(
+					{
+						id: resultViaCreateUser.id,
+						nickname: resultViaCreateUser.nickname,
+						email: resultViaCreateUser.email,
+					},
+					process.env.ACCESS_SECRET,
+					{
+						expiresIn: "1h",
+					},
+				);
+				console.log(8);
+				res.status(201).json({ token, nickname: resultViaCreateUser.nickname });
+			}
+		} catch {
+			console.log(9);
+			res.status(400).end();
 		}
 	},
 	//이메일 중복확인
