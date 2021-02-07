@@ -8,7 +8,6 @@ router.post("/signup/checkemail", user_controller.check_email);
 router.post("/signup/checknick", user_controller.check_nick);
 router.post("/login", user_controller.log_in);
 router.post("/logout", user_controller.log_out);
-router.post("/sociallogin", user_controller.social_login);
-router.post("/socialsignup", user_controller.social_signup);
+router.post("/social", user_controller.social);
 
 module.exports = router;
