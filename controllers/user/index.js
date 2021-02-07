@@ -82,30 +82,38 @@ module.exports = {
 	social: async (req, res) => {
 		//authorizationCode를 OAuth서버에다가 줘서 accessToken을 받아온다.
 		console.log(req.body, "fasdfas");
-		const resultViaOAuthToken = await axios.post(
-			`https://www.googleapis.com/oauth2/v4/token`,
-			{
-				client_id:
-					"103482969021-9v5buae9qqmjb71n9geuprb73fe1c013.apps.googleusercontent.com",
-				client_secret: process.env.CLIENT_SECRET,
-				code: req.body.authorizationCode,
-				grant_type: "authorization_code",
-				redirect_uri: "http://localhost:3000/login",
-			},
-			{
-				Accept: "application/json",
-				"Content-Type": "application/json",
-			},
-		);
-		//Access토큰을토대로 api서버에 유저의 데이터를요청을한다.
-		const resultViaApi = await axios.get(
-			"https://www.googleapis.com/oauth2/v2/userinfo",
-			{
-				headers: {
-					Authorization: `Bearer ${resultViaOAuthToken.data.accecc_token}`,
+		try {
+			const resultViaOAuthToken = await axios.post(
+				`https://www.googleapis.com/oauth2/v4/token`,
+				{
+					client_id:
+						"103482969021-9v5buae9qqmjb71n9geuprb73fe1c013.apps.googleusercontent.com",
+					client_secret: process.env.CLIENT_SECRET,
+					code: req.body.authorizationCode,
+					grant_type: "authorization_code",
+					redirect_uri: "http://localhost:3000/login",
 				},
-			},
-		);
+				{
+					Accept: "application/json",
+					"Content-Type": "application/json",
+				},
+			);
+		} catch {
+			res.status(400).end();
+		}
+		//Access토큰을토대로 api서버에 유저의 데이터를요청을한다.
+		try {
+			const resultViaApi = await axios.get(
+				"https://www.googleapis.com/oauth2/v2/userinfo",
+				{
+					headers: {
+						Authorization: `Bearer ${resultViaOAuthToken.data.accecc_token}`,
+					},
+				},
+			);
+		} catch {
+			res.status(400).end();
+		}
 		//데이터베이스에서 data의 이메일과 social이 true인값이 있으면,
 		const resultViaFindUser = await user.findOne({
 			where: { email: resultViaApi.data.email, is_social: true },
