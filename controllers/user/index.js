@@ -96,7 +96,7 @@ module.exports = {
 			res.status(200).end();
 		}
 	},
-	//닉네임 중복황인
+	//닉네임 중복확인
 	//POST /users/signup/checknick
 	check_nick: async (req, res) => {
 		const check = await user.findOne({
