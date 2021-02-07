@@ -97,20 +97,22 @@ module.exports = {
 					"Content-Type": "application/json",
 				},
 			);
+			console.log(resultViaOAuthToken)
 			console.log(1);
 			//Access토큰을토대로 api서버에 유저의 데이터를요청을한다.
 			const resultViaApi = await axios.get(
 				"https://www.googleapis.com/oauth2/v2/userinfo",
 				{
 					headers: {
-						Authorization: `Bearer ${resultViaOAuthToken.data.accecc_token}`,
+						Authorization: `Bearer ${resultViaOAuthToken.data.access_token}`,
 					},
 				},
 			);
 			console.log(2);
+			console.log(resultViaApi);
 			//데이터베이스에서 data의 이메일과 social이 true인값이 있으면,
 			const resultViaFindUser = await user.findOne({
-				where: { email: resultViaApi.data.email, is_social: true },
+				where: { email: resultViaApi.data.id.toString(), is_social: true },
 			});
 			console.log(3);
 			if (resultViaFindUser) {
@@ -134,7 +136,7 @@ module.exports = {
 				//받아온 데이터를 기준으로 user테이블에 social true로 데이터에 등록한후,
 				console.log(6);
 				const resultViaCreateUser = await user.create({
-					email,
+					email:resultViaApi.data.id.toString(),
 					is_social: true,
 				});
 				console.log(7);
