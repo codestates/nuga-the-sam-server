@@ -18,6 +18,7 @@
 	},
 	"homepage": "https://github.com/codestates/nuga-the-sam-server#readme",
 	"dependencies": {
+		"axios": "^0.21.1",
 		"cors": "^2.8.5",
 		"crypto-js": "^4.0.0",
 		"dotenv": "^8.2.0",

@@ -1,6 +1,7 @@
 const { user } = require("../../models");
 const crypto = require("crypto-js");
 const jwt = require("jsonwebtoken");
+const axios = require("axios");
 require("dotenv").config();
 
 module.exports = {
@@ -63,7 +64,7 @@ module.exports = {
 						expiresIn: "1h",
 					},
 				);
-				res.json({ token, nickname: user.nickname });
+				res.json({ token, nickname: result.nickname });
 			} else {
 				res.status(404).json({ message: "not found" });
 			}
@@ -76,15 +77,75 @@ module.exports = {
 	log_out: async (req, res) => {
 		res.send();
 	},
-	//소셜로그인
-	//POST /users/sociallogin
-	social_login: async (req, res) => {
-		res.send();
-	},
-	//소셜 회원가입
-	//POST /users/socialsignup
-	social_signup: async (req, res) => {
-		res.send();
+	//소셜로그인, 회원가입
+	//POST /users/social
+	social: async (req, res) => {
+		//authorizationCode를 OAuth서버에다가 줘서 accessToken을 받아온다.
+		const resultViaOAuthToken = await axios.post(
+			`https://www.googleapis.com/oauth2/v4/token`,
+			{
+				client_id:
+					"103482969021-9v5buae9qqmjb71n9geuprb73fe1c013.apps.googleusercontent.com",
+				client_secret: process.env.CLIENT_SECRET,
+				code: req.body.authorizationCode,
+				grant_type: "authorization_code",
+				redirect_uri: "http://localhost:3000/login",
+			},
+			{
+				Accept: "application/json",
+				"Content-Type": "application/json",
+			},
+		);
+		//Access토큰을토대로 api서버에 유저의 데이터를요청을한다.
+		const resultViaApi = await axios.get(
+			"https://www.googleapis.com/oauth2/v2/userinfo",
+			{
+				headers: {
+					Authorization: `Bearer ${resultViaOAuthToken.data.accecc_token}`,
+				},
+			},
+		);
+		//데이터베이스에서 data의 이메일과 social이 true인값이 있으면,
+		const resultViaFindUser = await user.findOne({
+			where: { email: resultViaApi.data.email, is_social: true },
+		});
+		if (resultViaFindUser) {
+			//그에 해당하는 데이터를 뽑아서 토큰으로 만들어서 전달해준다.
+			const token = jwt.sign(
+				{
+					id: resultViaFindUser.id,
+					nickname: resultViaFindUser.nickname,
+					email: resultViaFindUser.email,
+				},
+				process.env.ACCESS_SECRET,
+				{
+					expiresIn: "1h",
+				},
+			);
+			res.json({ token, nickname: resultViaFindUser.nickname });
+			//없으면
+		} else {
+			//받아온 데이터를 기준으로 user테이블에 social true로 데이터에 등록한후,
+			const resultViaCreateUser = await user.create({
+				email,
+				is_social: true,
+			});
+			resultViaCreateUser.nickname = `Guest${resultViaCreateUser.id}`;
+			await resultViaCreateUser.save();
+			//가입시킨 데이터를 기준으로 토큰을 만들어서 전달해준다.
+			const token = jwt.sign(
+				{
+					id: resultViaCreateUser.id,
+					nickname: resultViaCreateUser.nickname,
+					email: resultViaCreateUser.email,
+				},
+				process.env.ACCESS_SECRET,
+				{
+					expiresIn: "1h",
+				},
+			);
+			res.status(201).json({ token, nickname: resultViaCreateUser.nickname });
+		}
 	},
 	//이메일 중복확인
 	//POST /users/signup/checkemail
