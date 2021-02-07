@@ -97,6 +97,7 @@ module.exports = {
 					"Content-Type": "application/json",
 				},
 			);
+			console.log(1);
 			//Access토큰을토대로 api서버에 유저의 데이터를요청을한다.
 			const resultViaApi = await axios.get(
 				"https://www.googleapis.com/oauth2/v2/userinfo",
@@ -106,11 +107,14 @@ module.exports = {
 					},
 				},
 			);
+			console.log(2);
 			//데이터베이스에서 data의 이메일과 social이 true인값이 있으면,
 			const resultViaFindUser = await user.findOne({
 				where: { email: resultViaApi.data.email, is_social: true },
 			});
+			console.log(3);
 			if (resultViaFindUser) {
+				console.log(4);
 				//그에 해당하는 데이터를 뽑아서 토큰으로 만들어서 전달해준다.
 				const token = jwt.sign(
 					{
@@ -123,14 +127,17 @@ module.exports = {
 						expiresIn: "1h",
 					},
 				);
+				console.log(5);
 				res.json({ token, nickname: resultViaFindUser.nickname });
 				//없으면
 			} else {
 				//받아온 데이터를 기준으로 user테이블에 social true로 데이터에 등록한후,
+				console.log(6);
 				const resultViaCreateUser = await user.create({
 					email,
 					is_social: true,
 				});
+				console.log(7);
 				resultViaCreateUser.nickname = `Guest${resultViaCreateUser.id}`;
 				await resultViaCreateUser.save();
 				//가입시킨 데이터를 기준으로 토큰을 만들어서 전달해준다.
@@ -145,9 +152,11 @@ module.exports = {
 						expiresIn: "1h",
 					},
 				);
+				console.log(8);
 				res.status(201).json({ token, nickname: resultViaCreateUser.nickname });
 			}
 		} catch {
+			console.log(9);
 			res.status(400).end();
 		}
 	},
