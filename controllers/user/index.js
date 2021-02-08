@@ -219,14 +219,17 @@ module.exports = {
 	//PUT /users/modify
 	modify_nick: async (req, res) => {
 		if (req.headers.authorization) {
+			console.log(req.headers.authorization,111111)
 			jwt.verify(
 				req.headers.authorization.split(" ")[1],
 				process.env.ACCESS_SECRET,
 				async (err, tokenData) => {
 					if (err) {
+						console.log(err,'errerrerrerr')
 						res.status(403).json({ message: "invalid token" });
 					} else {
-						const result = user.findOne({ where: { id: tokenData.id } });
+						const result = await user.findOne({ where: { id: tokenData.id } });
+						console.log(result,'can get result')
 						result.nickname = req.body.nickname;
 						await result.save();
 						res.status(200).end();
