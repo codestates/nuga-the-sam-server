@@ -1,4 +1,4 @@
-const { fight } = require("../../models");
+const { fight, comment } = require("../../models");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
@@ -42,6 +42,41 @@ module.exports = {
 	//url 파라미터를 받아서 특정 fight만 보내줌
 	//GET/fights/:fight_id
 	get_fight: async (req, res) => {
+		//토큰이 있는경우
+		if (req.headers.authorization) {
+			jwt.verify(
+				accessToken,
+				process.env.ACCESS_SECRET,
+				async (err, tokenData) => {
+					if (err) {
+						//토큰이 유효하지않은 경우
+						//해당fight내용과 특정fight에 해당하는 comments를준다.
+						//상태코드는 205
+						const result = await fight.findOne({
+							where: { id: req.params.fight_id },
+						});
+						const comments = await comment.findOne({
+							where: { fight_id: req.params.fight_id },
+						});
+						res.status(205).json({ ...result, comments });
+					} else {
+						//토큰이 유효한경우
+					}
+				},
+			);
+		} else {
+			//토큰이 없는경우
+			//해당fight게시글과 특정fight에 해당하는 comments를준다.
+			//상태코드는 205
+			const result = await fight.findOne({
+				where: { id: req.params.fight_id },
+			});
+			const comments = await comment.findOne({
+				where: { fight_id: req.params.fight_id },
+			});
+			res.status(205).json({ ...result, comments });
+		}
+
 		res.send();
 	},
 	//특정 카테고리에 해당하는 fight만 보내줌

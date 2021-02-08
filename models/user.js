@@ -1,5 +1,6 @@
 "use strict";
 const { Model } = require("sequelize");
+const comment = require("./comment");
 module.exports = (sequelize, DataTypes) => {
 	class user extends Model {
 		/**
@@ -15,14 +16,11 @@ module.exports = (sequelize, DataTypes) => {
 			user.hasMany(models.comment, {
 				foreignKey: "user_id",
 			});
-			user.belongsToMany(models.fight, {
-				through: "users_fights_votes",
-				targetKey: "id",
+			user.hasMany(models.users_fights_vote, {
 				foreignKey: "user_id",
 			});
 			user.belongsToMany(models.comment, {
-				through: "users_comments_votes",
-				targetKey: "id",
+				through: "users_comments_like",
 				foreignKey: "user_id",
 			});
 		}

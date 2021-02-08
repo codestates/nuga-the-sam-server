@@ -10,28 +10,14 @@ module.exports = {
 			},
 			user_id: {
 				type: Sequelize.INTEGER,
-				reference: {
-					model: "users",
-					key: "id",
-				},
+				references: { model: "users", key: "id" },
 			},
 			fight_id: {
 				type: Sequelize.INTEGER,
-				reference: {
-					model: "fights",
-					key: "id",
-				},
+				references: { model: "fights", key: "id" },
 			},
 			vote_where: {
 				type: Sequelize.STRING,
-			},
-			createdAt: {
-				allowNull: false,
-				type: Sequelize.DATE,
-			},
-			updatedAt: {
-				allowNull: false,
-				type: Sequelize.DATE,
 			},
 		});
 	},
