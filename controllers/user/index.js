@@ -22,7 +22,6 @@ module.exports = {
 							where: { id: tokenData.id },
 						});
 						if (userData) {
-
 							//fights테이블에서 유저아이디에 해당하는 fight를 찾는다.(findAll)
 							const fights = await fight.findAll({
 								where: { user_id: tokenData.id },
@@ -214,6 +213,31 @@ module.exports = {
 			res.status(400).json({ message: "already exist nickname" });
 		} else {
 			res.status(200).end();
+		}
+	},
+	//닉네임 변경
+	//PUT /users/modify
+	modify_nick: async (req, res) => {
+		if (req.headers.authorization) {
+			console.log(req.headers.authorization,111111)
+			jwt.verify(
+				req.headers.authorization.split(" ")[1],
+				process.env.ACCESS_SECRET,
+				async (err, tokenData) => {
+					if (err) {
+						console.log(err,'errerrerrerr')
+						res.status(403).json({ message: "invalid token" });
+					} else {
+						const result = await user.findOne({ where: { id: tokenData.id } });
+						console.log(result,'can get result')
+						result.nickname = req.body.nickname;
+						await result.save();
+						res.status(200).end();
+					}
+				},
+			);
+		} else {
+			res.status(403).json({ message: "invalid token" });
 		}
 	},
 };

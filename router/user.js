@@ -9,5 +9,6 @@ router.post("/signup/checknick", user_controller.check_nick);
 router.post("/login", user_controller.log_in);
 router.post("/logout", user_controller.log_out);
 router.post("/social", user_controller.social);
+router.put("/modify", user_controller.modify_nick);
 
 module.exports = router;
