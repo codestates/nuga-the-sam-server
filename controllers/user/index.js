@@ -2,6 +2,7 @@ const { user, fight, comment } = require("../../models");
 const crypto = require("crypto-js");
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
+const { token } = require("morgan");
 require("dotenv").config();
 
 module.exports = {
@@ -22,7 +23,6 @@ module.exports = {
 							where: { id: tokenData.id },
 						});
 						if (userData) {
-
 							//fights테이블에서 유저아이디에 해당하는 fight를 찾는다.(findAll)
 							const fights = await fight.findAll({
 								where: { user_id: tokenData.id },
@@ -214,6 +214,28 @@ module.exports = {
 			res.status(400).json({ message: "already exist nickname" });
 		} else {
 			res.status(200).end();
+		}
+	},
+	//닉네임 변경
+	//PUT /users/modify
+	modify_nick: async (req, res) => {
+		if (req.headers.authorization) {
+			jwt.verify(
+				req.headers.authorization.split(" ")[1],
+				process.env.ACCESS_SECRET,
+				async (err, tokenData) => {
+					if (err) {
+						res.status(403).json({ message: "invalid token" });
+					} else {
+						const result = user.findOne({ where: { id: tokenData.id } });
+						result.nickname = req.body.nickname;
+						await result.save();
+						res.status(200).end();
+					}
+				},
+			);
+		} else {
+			res.status(403).json({ message: "invalid token" });
 		}
 	},
 };
