@@ -19,7 +19,7 @@ module.exports = {
 					process.env.ACCESS_SECRET,
 					async (err, decoded) => {
 						if (err) {
-							res.status(403).json({ message: "invalid input" });
+							res.status(403).json({ message: "invalid token" });
 						} else {
 							const user_id = decoded.id;
 							const newFight = await fight.create({
@@ -33,7 +33,7 @@ module.exports = {
 					},
 				);
 			} else {
-				res.status(403).json({ message: "invalid input" });
+				res.status(403).json({ message: "invalid token" });
 			}
 		} else {
 			res.status(400).json({ message: "invalid input" });

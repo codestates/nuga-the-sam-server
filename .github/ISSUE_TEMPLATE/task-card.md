@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 ### ISSUE
-- Group:  `client`, `server`, `sr`
+- Group:  `server`
 - Type: `bug`, `feature`, `delete`
 - Detail: fix actions from client redux
 
@@ -18,7 +18,6 @@ assignees: ''
 3. [ ] Job3
 
 ### Estimated time
-> Pick one
 ### `0.5h`
 ### `1h`
 ### `1.5h`
@@ -28,6 +27,5 @@ assignees: ''
 
 ### Labels
 - Estimated time: `E: 1h`
-- Group : `client`, `server`
-- Sprint: `Sprint__NUMBER__`
-- Urgency: `High`, `Middle`, `Low`
+- Group : `server`
+- Sprint: `Sprint__N__`
