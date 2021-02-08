@@ -17,7 +17,8 @@ module.exports = {
 						const newComment = await user.create({
 							user_id: tokenData.id,
 							fight_id: req.params.fight_id,
-							comment,
+							text: req.body.text,
+							side: req.body.side,
 						});
 						res.stauts(201).json(newComment);
 					}
