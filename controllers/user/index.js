@@ -2,7 +2,6 @@ const { user, fight, comment } = require("../../models");
 const crypto = require("crypto-js");
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
-const { token } = require("morgan");
 require("dotenv").config();
 
 module.exports = {
