@@ -6,6 +6,7 @@ module.exports = {
 	//새로운 댓글 등록
 	//POST/fights/:fight_id/comments
 	post_comment: async (req, res) => {
+		console.log(req.body)
 		if (req.headers.authorization) {
 			jwt.verify(
 				req.headers.authorization.split(" ")[1],
