@@ -15,9 +15,7 @@ module.exports = (sequelize, DataTypes) => {
 			fight.hasMany(models.comment, {
 				foreignKey: "fight_id",
 			});
-			fight.belongsToMany(models.user, {
-				through: "users_fights_votes",
-				targetKey: "id",
+			fight.hasMany(models.users_fights_vote, {
 				foreignKey: "fight_id",
 			});
 		}

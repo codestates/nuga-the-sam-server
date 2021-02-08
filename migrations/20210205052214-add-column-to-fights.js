@@ -1,5 +1,7 @@
 "use strict";
 
+const { sequelize } = require("../models");
+
 module.exports = {
 	up: async (queryInterface, Sequelize) => {
 		/**
@@ -8,6 +10,10 @@ module.exports = {
 		 * Example:
 		 * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
 		 */
+		await queryInterface.addColumn("fights", "visits", {
+			type: Sequelize.INTEGER,
+			defaultValue: 0,
+		});
 		await queryInterface.addColumn("users", "is_social", {
 			type: Sequelize.BOOLEAN,
 			defaultValue: false,
@@ -21,6 +27,7 @@ module.exports = {
 		 * Example:
 		 * await queryInterface.dropTable('users');
 		 */
+		await queryInterface.removeColumn("fights", "visits");
 		await queryInterface.removeColumn("users", "is_social");
 	},
 };

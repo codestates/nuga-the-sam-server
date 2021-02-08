@@ -16,8 +16,7 @@ module.exports = (sequelize, DataTypes) => {
 				foreignKey: { name: "fight_id" },
 			});
 			comment.belongsToMany(models.user, {
-				through: "users_comments_votes",
-				targetKey: "id",
+				through: "users_comments_like",
 				foreignKey: "comment_id",
 			});
 		}
@@ -26,8 +25,6 @@ module.exports = (sequelize, DataTypes) => {
 		{
 			text: DataTypes.STRING,
 			like_count: { type: DataTypes.INTEGER, defaultValue: 0 },
-			dislike_count: { type: DataTypes.INTEGER, defaultValue: 0 },
-			side: DataTypes.STRING,
 		},
 		{
 			sequelize,
