@@ -24,6 +24,7 @@ module.exports = (sequelize, DataTypes) => {
 	comment.init(
 		{
 			text: DataTypes.STRING,
+			side: DataTypes.STRING,
 			like_count: { type: DataTypes.INTEGER, defaultValue: 0 },
 		},
 		{
