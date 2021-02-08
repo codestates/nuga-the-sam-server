@@ -21,7 +21,7 @@ router.put(
 	comment_controller.like_comment,
 );
 router.put(
-	"/:fight_id/comments/:comment_id/dislike",
-	comment_controller.dislike_comment,
+	"/:fight_id/comments/:comment_id/unlike",
+	comment_controller.unlike_comment,
 );
 module.exports = router;

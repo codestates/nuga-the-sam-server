@@ -1,4 +1,10 @@
-const { fight } = require("../../models");
+const {
+	user,
+	fight,
+	comment,
+	users_fights_vote,
+	users_comments_like,
+} = require("../../models");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
@@ -42,6 +48,156 @@ module.exports = {
 	//url 파라미터를 받아서 특정 fight만 보내줌
 	//GET/fights/:fight_id
 	get_fight: async (req, res) => {
+		//토큰이 있는경우
+		if (req.headers.authorization) {
+			jwt.verify(
+				accessToken,
+				process.env.ACCESS_SECRET,
+				async (err, tokenData) => {
+					if (err) {
+						//토큰이 유효하지않은 경우
+						//해당fight내용과 특정fight에 해당하는 comments를준다.
+						//상태코드는 205
+						const result = await fight.findOne({
+							include: [
+								{
+									model: user,
+									attributes: ["nickname"],
+								},
+							],
+							where: { id: req.params.fight_id },
+						});
+						console.log(1);
+						const comments = await comment.findAll({
+							include: [
+								{
+									model: user,
+									attributes: ["nickname"],
+								},
+							],
+							where: { fight_id: req.params.fight_id },
+						});
+						console.log(2);
+						res.status(205).json({
+							id: result.id,
+							category: result.category,
+							left: result.left,
+							right: result.right,
+							left_vote_count: result.left_vote_count,
+							right_vote_count: result.right_vote_count,
+							visits: result.visits,
+							createdAt: result.createdAt,
+							nickname: result.user.nickname,
+							comments,
+						});
+					} else {
+						//토큰이 유효한경우
+						//유저가 어디에 투표를 했는지 데이터를 불러온다.(left인지 right인지)
+						const vote_where = await users_fights_vote.findOne({
+							where: { user_id: tokenData.id, fight_id: req.params.fight_id },
+						});
+						console.log(3);
+						//파라미터에 해당하는 fight와 user이름의 join값을 불러온다.
+						const paramFight = await fight.findOne({
+							include: [
+								{
+									model: user,
+									attributes: ["nickname"],
+								},
+							],
+							where: { id: req.params.fight_id },
+						});
+						console.log(4);
+						//fight_id에 해당하는 comments를 불러온다
+						//
+						const comments = await comment.findAll({
+							where: { fight_id: req.param.fight_id },
+							include: [
+								{
+									model: user,
+									attributes: ["nickname"],
+								},
+							],
+						});
+						console.log(5);
+						res.status(200).json({
+							id: paramFight.id,
+							category: paramFight.category,
+							left: paramFight.left,
+							right: paramFight.right,
+							left_vote_count: paramFight.left_vote_count,
+							right_vote_count: paramFight.right_vote_count,
+							visits: paramFight.visits,
+							createdAt: paramFight.createdAt,
+							nickname: paramFight.user.nickname,
+							comments: comments.map(async (comment) => {
+								const isLike = await users_comments_like.findOne({
+									where: { comment_id: comment.id, user_id: tokenData.id },
+								});
+								if (isLike) {
+									return {
+										id: comment.id,
+										text: comment.text,
+										side: comment.side,
+										like_count: comment.like_count,
+										createdAt: comment.createdAt,
+										isLike: true,
+									};
+								} else {
+									return {
+										id: comment.id,
+										text: comment.text,
+										side: comment.side,
+										like_count: comment.like_count,
+										createdAt: comment.createdAt,
+										isLike: false,
+									};
+								}
+							}),
+							vote_where: vote_where.vote_where,
+						});
+					}
+				},
+			);
+		} else {
+			//토큰이 없는경우
+			//해당fight게시글과 특정fight에 해당하는 comments를준다.
+			//상태코드는 205
+			console.log(6);
+			const result = await fight.findOne({
+				include: [
+					{
+						model: user,
+						attributes: ["nickname"],
+					},
+				],
+				where: { id: req.params.fight_id },
+			});
+			console.log(7);
+			const comments = await comment.findAll({
+				include: [
+					{
+						model: user,
+						attributes: ["nickname"],
+					},
+				],
+				where: { fight_id: req.params.fight_id },
+			});
+			console.log(8);
+			res.status(205).json({
+				id: result.id,
+				category: result.category,
+				left: result.left,
+				right: result.right,
+				left_vote_count: result.left_vote_count,
+				right_vote_count: result.right_vote_count,
+				visits: result.visits,
+				createdAt: result.createdAt,
+				nickname: result.user.nickname,
+				comments,
+			});
+		}
+
 		res.send();
 	},
 	//특정 카테고리에 해당하는 fight만 보내줌

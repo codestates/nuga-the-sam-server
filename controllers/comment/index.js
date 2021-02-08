@@ -48,8 +48,8 @@ module.exports = {
 		res.send();
 	},
 	//댓글 비추
-	//PUT/fights/:fight_id/comments/:comment_id/dislike
-	// dislike_comment: async (req, res) => {
-	// res.send();
-	// },
+	//PUT/fights/:fight_id/comments/:comment_id/unlike
+	unlike_comment: async (req, res) => {
+		res.send();
+	},
 };
