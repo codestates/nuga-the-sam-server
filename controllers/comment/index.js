@@ -35,7 +35,28 @@ module.exports = {
 	//댓글 수정
 	//PUT/fights/:fight_id/comments/:comment_id/modify
 	mod_comment: async (req, res) => {
-		res.send();
+		if (req.headers.authorization) {
+			jwt.verify(
+				req.header.authorization.split(" ")[1],
+				process.env.ACCESS_SECRET,
+				async (err, tokenData) => {
+					if (err) {
+						console.log(err, "@#@#@##@#!@!##!#!##");
+						res.status(403).json({ message: "invalid token" });
+					} else {
+						const modComment = await user.findone({
+							where: { id: tokenData.id },
+						});
+						console.log(modComment, "!!!!!!!@@@@@@@@@");
+						modComment.comment = req.body.comment;
+						await result.save();
+						res.status(200).end();
+					}
+				},
+			);
+		} else {
+			res.status(403).json({ message: "invalid token" });
+		}
 	},
 	//댓글 삭제
 	//PUT/fights/:fight_id/comments/:comment_id/delete
