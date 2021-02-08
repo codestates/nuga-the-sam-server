@@ -20,7 +20,7 @@ module.exports = {
 							text: req.body.text,
 							side: req.body.side,
 						});
-						res.stauts(201).json(newComment);
+						res.status(201).json(newComment);
 					}
 				},
 			);
