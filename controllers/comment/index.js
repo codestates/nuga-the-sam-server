@@ -1,11 +1,31 @@
 const { comment } = require("../../models");
 const jwt = require("jsonwebtoken");
+const user = require("../user");
 
 module.exports = {
 	//새로운 댓글 등록
 	//POST/fights/:fight_id/comments
 	post_comment: async (req, res) => {
-		res.send();
+		if (req.headers.authorization) {
+			jwt.verify(
+				req.headers.authorization.split(" ")[1],
+				process.env.ACCESS_SECRET,
+				async (err, tokenData) => {
+					if (err) {
+						res.status(403).json({ message: "invalid token" });
+					} else {
+						const newComment = await user.create({
+							user_id: tokenData.id,
+							fight_id: req.params.fight_id,
+							comment,
+						});
+						res.stauts(201).json(newComment);
+					}
+				},
+			);
+		} else {
+			res.status(403).json({ message: "invalid token" });
+		}
 	},
 	//해당 fight의 댓글 불러오기
 	//GET/fights/:fight_id/comments
@@ -28,7 +48,7 @@ module.exports = {
 		res.send();
 	},
 	//댓글 비추
-	//PUT/fights/:fight_id/comments/:comment_id/dislike
+	//PUT/fights/:fight_id/comments/:comment_id/unlike
 	unlike_comment: async (req, res) => {
 		res.send();
 	},
