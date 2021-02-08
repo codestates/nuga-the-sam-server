@@ -44,11 +44,18 @@ module.exports = {
 						console.log(err, "@#@#@##@#!@!##!#!##");
 						res.status(403).json({ message: "invalid token" });
 					} else {
-						const modComment = await user.findone({
-							where: { id: tokenData.id },
+						const modComment = await comment.findone({
+							where: { id: req.params.comment_id },
 						});
+						if (modComment.user_id === tokenData.id) {
+							modComment.text = req.body.text;
+							await result.save();
+							res.status(200).end();
+						} else {
+							res.status(401).json({ messgae: "unauthorized" });
+						}
 						console.log(modComment, "!!!!!!!@@@@@@@@@");
-						modComment.comment = req.body.comment;
+						modComment.text = req.body.text;
 						await result.save();
 						res.status(200).end();
 					}
