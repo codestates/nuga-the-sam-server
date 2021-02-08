@@ -1,4 +1,4 @@
-const { user } = require("../../models");
+const { user, fight, comment } = require("../../models");
 const crypto = require("crypto-js");
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
@@ -6,9 +6,46 @@ require("dotenv").config();
 
 module.exports = {
 	//특정 유저데이터 요청(마이페이지)
-	//GET/users/:id
+	//GET/users
 	get_user_data: async (req, res) => {
-		res.send();
+		//헤더를 까서 토큰을 뽑는다. 토큰도 깐다.
+		if (req.headers.authorization) {
+			jwt.verify(
+				req.headers.authorization.split(" ")[1],
+				process.env.ACCESS_SECRET,
+				async (err, tokenData) => {
+					if (err) {
+						res.status(403).json({ message: "invalid token" });
+					} else {
+						//토큰에 있는 유저아이디를 토대로 유저테이블에서 유저데이터를 찾는다.(findOne)
+						const userData = await user.findOne({
+							where: { id: tokenData.id },
+						});
+						if (userData) {
+							//fights테이블에서 유저아이디에 해당하는 fight를 찾는다.(findAll)
+							const fights = await fight.findAll({
+								where: { user_id: tokenData.id },
+							});
+							//comments테이블에서 유저아이디에 해당하는 comment를 찾는다(findAll)
+							const comments = await comment.findAll({
+								where: { user_id: tokenData.id },
+							});
+							//유저의 닉네임과 created_at과 찾은 fights와 comments를 준다.
+							res.status(200).json({
+								nickname: userData.nickname,
+								createdAt: userData.createdAt,
+								fights,
+								comments,
+							});
+						} else {
+							res.status(404).json({ message: "Not Found" });
+						}
+					}
+				},
+			);
+		} else {
+			res.status(403).json({ message: "invalid token" });
+		}
 	},
 	//회원가입
 	//POST /users/signup
@@ -97,7 +134,7 @@ module.exports = {
 					"Content-Type": "application/json",
 				},
 			);
-			console.log(resultViaOAuthToken)
+			console.log(resultViaOAuthToken);
 			console.log(1);
 			//Access토큰을토대로 api서버에 유저의 데이터를요청을한다.
 			const resultViaApi = await axios.get(
@@ -116,7 +153,6 @@ module.exports = {
 			});
 			console.log(3);
 			if (resultViaFindUser) {
-				console.log(4);
 				//그에 해당하는 데이터를 뽑아서 토큰으로 만들어서 전달해준다.
 				const token = jwt.sign(
 					{
@@ -129,17 +165,14 @@ module.exports = {
 						expiresIn: "1h",
 					},
 				);
-				console.log(5);
 				res.json({ token, nickname: resultViaFindUser.nickname });
 				//없으면
 			} else {
 				//받아온 데이터를 기준으로 user테이블에 social true로 데이터에 등록한후,
-				console.log(6);
 				const resultViaCreateUser = await user.create({
-					email:resultViaApi.data.id.toString(),
+					email: resultViaApi.data.id.toString(),
 					is_social: true,
 				});
-				console.log(7);
 				resultViaCreateUser.nickname = `Guest${resultViaCreateUser.id}`;
 				await resultViaCreateUser.save();
 				//가입시킨 데이터를 기준으로 토큰을 만들어서 전달해준다.
@@ -154,11 +187,9 @@ module.exports = {
 						expiresIn: "1h",
 					},
 				);
-				console.log(8);
 				res.status(201).json({ token, nickname: resultViaCreateUser.nickname });
 			}
 		} catch {
-			console.log(9);
 			res.status(400).end();
 		}
 	},
@@ -172,7 +203,7 @@ module.exports = {
 			res.status(200).end();
 		}
 	},
-	//닉네임 중복확인
+	//닉네임 중복황인
 	//POST /users/signup/checknick
 	check_nick: async (req, res) => {
 		const check = await user.findOne({
