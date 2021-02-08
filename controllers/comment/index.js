@@ -14,7 +14,7 @@ module.exports = {
 					if (err) {
 						res.status(403).json({ message: "invalid token" });
 					} else {
-						const newComment = await user.create({
+						const newComment = await comment.create({
 							user_id: tokenData.id,
 							fight_id: req.params.fight_id,
 							text: req.body.text,
