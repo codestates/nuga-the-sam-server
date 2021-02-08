@@ -22,6 +22,7 @@ module.exports = {
 							where: { id: tokenData.id },
 						});
 						if (userData) {
+
 							//fights테이블에서 유저아이디에 해당하는 fight를 찾는다.(findAll)
 							const fights = await fight.findAll({
 								where: { user_id: tokenData.id },
