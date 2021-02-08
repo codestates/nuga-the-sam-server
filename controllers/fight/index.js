@@ -1,4 +1,9 @@
-const { fight, comment } = require("../../models");
+const {
+	fight,
+	comment,
+	users_fights_vote,
+	users_comments_like,
+} = require("../../models");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 

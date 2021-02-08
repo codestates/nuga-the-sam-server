@@ -18,10 +18,6 @@ module.exports = (sequelize, DataTypes) => {
 			fight.hasMany(models.users_fights_vote, {
 				foreignKey: "fight_id",
 			});
-			user.belongsToMany(models.comment, {
-				through: "users_comments_like",
-				foreignKey: "user_id",
-			});
 		}
 	}
 	fight.init(

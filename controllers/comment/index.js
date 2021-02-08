@@ -29,7 +29,7 @@ module.exports = {
 	},
 	//댓글 비추
 	//PUT/fights/:fight_id/comments/:comment_id/dislike
-	dislike_comment: async (req, res) => {
+	unlike_comment: async (req, res) => {
 		res.send();
 	},
 };
