@@ -224,9 +224,4 @@ module.exports = {
 	put_vote_right: async (req, res) => {
 		res.send();
 	},
-	//유저가 투표했는지 여부를 확인
-	//GET/fights/:fight_id/is_vote
-	get_isVote: async (req, res) => {
-		res.send();
-	},
 };
