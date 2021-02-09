@@ -167,7 +167,7 @@ module.exports = {
 							createdAt: paramFight.createdAt,
 							nickname: paramFight.user.nickname,
 							comments: resComments,
-							vote_where: vote_where.vote_where,
+							vote_where: vote_where ? vote_where.vote_where : null,
 						});
 					}
 				},
