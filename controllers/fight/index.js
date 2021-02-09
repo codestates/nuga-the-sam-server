@@ -124,7 +124,7 @@ module.exports = {
 								},
 							],
 						});
-						console.log(4 - 1);
+						console.log("4 - 1");
 						const resComments = comments.map(async (comment) => {
 							const isLike = await users_comments_like.findOne({
 								where: { comment_id: comment.id, user_id: tokenData.id },
