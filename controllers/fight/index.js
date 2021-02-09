@@ -49,9 +49,9 @@ module.exports = {
 	//GET/fights/:fight_id
 	get_fight: async (req, res) => {
 		//토큰이 있는경우
-		console.log(req.headers.authorization)
+		console.log(req.headers.authorization);
 		if (req.headers.authorization) {
-			console.log(req.headers.authorization)
+			console.log(req.headers.authorization);
 			const accessToken = req.headers.authorization.split(" ")[1];
 			jwt.verify(
 				accessToken,
@@ -124,7 +124,34 @@ module.exports = {
 								},
 							],
 						});
-						console.log(5);
+						console.log("4 - 1");
+						const resComments = comments.map(async (comment) => {
+							const isLike = await users_comments_like.findOne({
+								where: { comment_id: comment.id, user_id: tokenData.id },
+							});
+							if (isLike) {
+								return {
+									id: comment.id,
+									text: comment.text,
+									side: comment.side,
+									like_count: comment.like_count,
+									createdAt: comment.createdAt,
+									nickname: comment.user.nickname,
+									isLike: true,
+								};
+							} else {
+								return {
+									id: comment.id,
+									text: comment.text,
+									side: comment.side,
+									like_count: comment.like_count,
+									createdAt: comment.createdAt,
+									nickname: comment.user.nickname,
+									isLike: false,
+								};
+							}
+						});
+						console.log(resComments, 5);
 						paramFight.visits++;
 						await paramFight.save();
 						res.status(200).json({
@@ -137,30 +164,7 @@ module.exports = {
 							visits: paramFight.visits,
 							createdAt: paramFight.createdAt,
 							nickname: paramFight.user.nickname,
-							comments: comments.map(async (comment) => {
-								const isLike = await users_comments_like.findOne({
-									where: { comment_id: comment.id, user_id: tokenData.id },
-								});
-								if (isLike) {
-									return {
-										id: comment.id,
-										text: comment.text,
-										side: comment.side,
-										like_count: comment.like_count,
-										createdAt: comment.createdAt,
-										isLike: true,
-									};
-								} else {
-									return {
-										id: comment.id,
-										text: comment.text,
-										side: comment.side,
-										like_count: comment.like_count,
-										createdAt: comment.createdAt,
-										isLike: false,
-									};
-								}
-							}),
+							comments: resComments,
 							vote_where: vote_where.vote_where,
 						});
 					}
@@ -206,7 +210,6 @@ module.exports = {
 				comments,
 			});
 		}
-
 	},
 	//특정 카테고리에 해당하는 fight만 보내줌
 	//GET/fights/category/:category
