@@ -127,28 +127,27 @@ module.exports = {
 						console.log("4 - 1");
 						const resComments = await Promise.all(
 							comments.map(async (elComment) => {
-								try {
-									await users_comments_like.findOne({
-										where: { comment_id: elComment.id, user_id: tokenData.id },
-									});
-
+								const isLike = await users_comments_like.findOne({
+									where: { comment_id: elComment.id, user_id: tokenData.id },
+								});
+								if (isLike) {
 									return {
 										id: elComment.id,
 										text: elComment.text,
 										side: elComment.side,
 										like_count: elComment.like_count,
 										createdAt: elComment.createdAt,
-										nickname: elComment.user.nickname,
+										user: { nickname: elComment.user.nickname },
 										isLike: true,
 									};
-								} catch {
+								} else {
 									return {
 										id: elComment.id,
 										text: elComment.text,
 										side: elComment.side,
 										like_count: elComment.like_count,
 										createdAt: elComment.createdAt,
-										nickname: elComment.user.nickname,
+										user: { nickname: elComment.user.nickname },
 										isLike: false,
 									};
 								}
