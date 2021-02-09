@@ -6,7 +6,7 @@ module.exports = {
 	//새로운 댓글 등록
 	//POST/fights/:fight_id/comments
 	post_comment: async (req, res) => {
-		console.log(req.body)
+		console.log(req.body);
 		if (req.headers.authorization) {
 			jwt.verify(
 				req.headers.authorization.split(" ")[1],
@@ -28,11 +28,6 @@ module.exports = {
 		} else {
 			res.status(403).json({ message: "invalid token" });
 		}
-	},
-	//해당 fight의 댓글 불러오기
-	//GET/fights/:fight_id/comments
-	get_comments: async (req, res) => {
-		res.send();
 	},
 	//댓글 수정
 	//PUT/fights/:fight_id/comments/:comment_id/modify

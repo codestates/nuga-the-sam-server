@@ -50,6 +50,7 @@ module.exports = {
 	get_fight: async (req, res) => {
 		//토큰이 있는경우
 		if (req.headers.authorization) {
+			const accessToken = req.headers.authorization.split(" ")[1];
 			jwt.verify(
 				accessToken,
 				process.env.ACCESS_SECRET,
@@ -78,6 +79,8 @@ module.exports = {
 							where: { fight_id: req.params.fight_id },
 						});
 						console.log(2);
+						result.visits++;
+						await result.save();
 						res.status(205).json({
 							id: result.id,
 							category: result.category,
@@ -120,6 +123,8 @@ module.exports = {
 							],
 						});
 						console.log(5);
+						paramFight.visits++;
+						await paramFight.save();
 						res.status(200).json({
 							id: paramFight.id,
 							category: paramFight.category,
@@ -184,6 +189,8 @@ module.exports = {
 				where: { fight_id: req.params.fight_id },
 			});
 			console.log(8);
+			result.visits++;
+			await result.save();
 			res.status(205).json({
 				id: result.id,
 				category: result.category,
@@ -211,16 +218,85 @@ module.exports = {
 	//좌측에다 투표
 	//PUT/fights/:fight_id/left_vote
 	put_vote_left: async (req, res) => {
-		res.send();
+		if (req.headers.authorization) {
+			console.log("put_vote_left-1");
+			jwt.verify(
+				req.headers.authorization.split(" ")[1],
+				process.env.ACCESS_SECRET,
+				async (err, tokenData) => {
+					if (err) {
+						console.log("put_vote_left-2");
+						res.status(403).json({ message: "invalid token" });
+					} else {
+						console.log("put_vote_left-3");
+						const isVote = await users_fights_vote.findOne({
+							where: { user_id: tokenData.id, fight_id: req.params.fight_id },
+						});
+						console.log(isVote, "put_vote_left-4");
+						if (isVote) {
+							res.status(409).json({ message: "aleady voted" });
+						} else {
+							const voteFight = await fight.findOne({
+								where: { fight_id: req.params.fight_id },
+							});
+							console.log(voteFight, "put_vote_left-5");
+							voteFight.left_vote_count++;
+							await voteFight.save();
+							const voteLog = await users_fights_vote.create({
+								user_id: tokenData.id,
+								fight_id: req.params.fight_id,
+								vote_where: "left",
+							});
+							console.log(voteLog, "put_vote_left-6");
+							res.status(201).end();
+						}
+					}
+				},
+			);
+		} else {
+			res.status(403).json({ message: "invalid token" });
+		}
 	},
 	//우측에다 투표
 	//PUT/fights/:fight_id/right_vote
 	put_vote_right: async (req, res) => {
-		res.send();
-	},
-	//유저가 투표했는지 여부를 확인
-	//GET/fights/:fight_id/is_vote
-	get_isVote: async (req, res) => {
-		res.send();
+		if (req.headers.authorization) {
+			console.log("put_vote_right-1");
+			jwt.verify(
+				req.headers.authorization.split(" ")[1],
+				process.env.ACCESS_SECRET,
+				async (err, tokenData) => {
+					if (err) {
+						console.log("put_vote_right-2");
+						res.status(403).json({ message: "invalid token" });
+					} else {
+						console.log("put_vote_right-3");
+						const isVote = await users_fights_vote.findOne({
+							where: { user_id: tokenData.id, fight_id: req.params.fight_id },
+						});
+						console.log(isVote, "put_vote_right-4");
+						if (isVote) {
+							res.status(409).json({ message: "aleady voted" });
+						} else {
+							const voteFight = await fight.findOne({
+								where: { fight_id: req.params.fight_id },
+							});
+							console.log(voteFight, "put_vote_right-5");
+							voteFight.right_vote_count++;
+							await voteFight.save();
+							const voteLog = await users_fights_vote.create({
+								user_id: tokenData.id,
+								fight_id: req.params.fight_id,
+								vote_where: "right",
+							});
+							console.log(voteLog, "put_vote_right-6");
+							res.status(201).end();
+						}
+					}
+				},
+			);
+		} else {
+			res.status(403).json({ message: "invalid token" });
+		}
 	},
 };
