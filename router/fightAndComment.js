@@ -12,8 +12,8 @@ router.put("/:fight_id/right_vote", fight_controller.put_vote_right);
 
 //comment 라우터
 router.post("/:fight_id/comments", comment_controller.post_comment);
-router.put("/:fight_id/comments/modify", comment_controller.mod_comment);
-router.put("/:fight_id/comments/delete", comment_controller.del_comment);
+router.put("/:fight_id/comments/:comment_id/modify", comment_controller.mod_comment);
+router.put("/:fight_id/comments/:comment_id/delete", comment_controller.del_comment);
 router.put(
 	"/:fight_id/comments/:comment_id/like",
 	comment_controller.like_comment,
