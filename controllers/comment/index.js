@@ -32,29 +32,27 @@ module.exports = {
 	//댓글 수정
 	//PUT/fights/:fight_id/comments/:comment_id/modify
 	mod_comment: async (req, res) => {
+		console.log(req.headers.authorization,11111111111)
 		if (req.headers.authorization) {
 			jwt.verify(
 				req.header.authorization.split(" ")[1],
 				process.env.ACCESS_SECRET,
 				async (err, tokenData) => {
 					if (err) {
-						console.log(err, "@#@#@##@#!@!##!#!##");
+						console.log(err, "err@#@#@##@#!@!##!#!##");
 						res.status(403).json({ message: "invalid token" });
 					} else {
-						const modComment = await comment.findone({
+						const modComment = await comment.findOne({
 							where: { id: req.params.comment_id },
 						});
 						if (modComment.user_id === tokenData.id) {
 							modComment.text = req.body.text;
-							await result.save();
+							await modComment.save();
 							res.status(200).end();
 						} else {
 							res.status(401).json({ messgae: "unauthorized" });
 						}
 						console.log(modComment, "!!!!!!!@@@@@@@@@");
-						modComment.text = req.body.text;
-						await result.save();
-						res.status(200).end();
 					}
 				},
 			);
