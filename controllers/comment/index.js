@@ -70,11 +70,19 @@ module.exports = {
 	//댓글 추천
 	//PUT/fights/:fight_id/comments/:comment_id/like
 	like_comment: async (req, res) => {
-		res.send();
-	},
-	//댓글 추천해제
-	//PUT/fights/:fight_id/comments/:comment_id/unlike
-	unlike_comment: async (req, res) => {
-		res.send();
+		if (req.headers.authorization) {
+			jwt.verify(
+				req.header.authorization.split(" ")[1],
+				process.env.ACCESS_SECRET,
+				async (err, tokenData) => {
+					if (err) {
+						res.status(403).json({ message: "invalid token" });
+					} else {
+					}
+				},
+			);
+		} else {
+			res.status(403).json({ message: "invalid token" });
+		}
 	},
 };
