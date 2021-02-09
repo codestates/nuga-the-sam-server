@@ -6,6 +6,7 @@ const {
 	users_comments_like,
 } = require("../../models");
 const jwt = require("jsonwebtoken");
+const { where } = require("sequelize/types");
 require("dotenv").config();
 
 module.exports = {
@@ -218,11 +219,85 @@ module.exports = {
 	//좌측에다 투표
 	//PUT/fights/:fight_id/left_vote
 	put_vote_left: async (req, res) => {
-		res.send();
+		if (req.headers.authorization) {
+			console.log("put_vote_left-1");
+			jwt.verify(
+				req.headers.authorization.split(" ")[1],
+				process.env.ACCESS_SECRET,
+				async (err, tokenData) => {
+					if (err) {
+						console.log("put_vote_left-2");
+						res.status(403).json({ message: "invalid token" });
+					} else {
+						console.log("put_vote_left-3");
+						const isVote = await users_fights_vote.findOne({
+							where: { user_id: tokenData.id, fight_id: req.params.fight_id },
+						});
+						console.log(isVote, "put_vote_left-4");
+						if (isVote) {
+							res.status(409).json({ message: "aleady voted" });
+						} else {
+							const voteFight = await fight.findOne({
+								where: { fight_id: req.params.fight_id },
+							});
+							console.log(voteFight, "put_vote_left-5");
+							voteFight.visits++;
+							await voteFight.save();
+							const voteLog = await users_fights_vote.create({
+								user_id: tokenData.id,
+								fight_id: req.params.fight_id,
+								vote_where: "left",
+							});
+							console.log(voteLog, "put_vote_left-6");
+							res.status(201).end();
+						}
+					}
+				},
+			);
+		} else {
+			res.status(403).json({ message: "invalid token" });
+		}
 	},
 	//우측에다 투표
 	//PUT/fights/:fight_id/right_vote
 	put_vote_right: async (req, res) => {
-		res.send();
+		if (req.headers.authorization) {
+			console.log("put_vote_right-1");
+			jwt.verify(
+				req.headers.authorization.split(" ")[1],
+				process.env.ACCESS_SECRET,
+				async (err, tokenData) => {
+					if (err) {
+						console.log("put_vote_right-2");
+						res.status(403).json({ message: "invalid token" });
+					} else {
+						console.log("put_vote_right-3");
+						const isVote = await users_fights_vote.findOne({
+							where: { user_id: tokenData.id, fight_id: req.params.fight_id },
+						});
+						console.log(isVote, "put_vote_right-4");
+						if (isVote) {
+							res.status(409).json({ message: "aleady voted" });
+						} else {
+							const voteFight = await fight.findOne({
+								where: { fight_id: req.params.fight_id },
+							});
+							console.log(voteFight, "put_vote_right-5");
+							voteFight.visits++;
+							await voteFight.save();
+							const voteLog = await users_fights_vote.create({
+								user_id: tokenData.id,
+								fight_id: req.params.fight_id,
+								vote_where: "right",
+							});
+							console.log(voteLog, "put_vote_right-6");
+							res.status(201).end();
+						}
+					}
+				},
+			);
+		} else {
+			res.status(403).json({ message: "invalid token" });
+		}
 	},
 };
