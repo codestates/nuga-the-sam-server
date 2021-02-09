@@ -72,7 +72,7 @@ module.exports = {
 	like_comment: async (req, res) => {
 		res.send();
 	},
-	//댓글 비추
+	//댓글 추천해제
 	//PUT/fights/:fight_id/comments/:comment_id/unlike
 	unlike_comment: async (req, res) => {
 		res.send();
