@@ -90,9 +90,10 @@ module.exports = {
 	//댓글 추천
 	//PUT/fights/:fight_id/comments/:comment_id/like
 	like_comment: async (req, res) => {
+		console.log(req.headers.authorization)
 		if (req.headers.authorization) {
 			jwt.verify(
-				req.header.authorization.split(" ")[1],
+				req.headers.authorization.split(" ")[1],
 				process.env.ACCESS_SECRET,
 				async (err, tokenData) => {
 					if (err) {
