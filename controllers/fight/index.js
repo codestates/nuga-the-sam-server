@@ -125,28 +125,28 @@ module.exports = {
 							],
 						});
 						console.log("4 - 1");
-						const resComments = comments.map(async (comment) => {
+						const resComments = comments.map(async (elComment) => {
 							const isLike = await users_comments_like.findOne({
-								where: { comment_id: comment.id, user_id: tokenData.id },
+								where: { comment_id: elComment.id, user_id: tokenData.id },
 							});
 							if (isLike) {
 								return {
-									id: comment.id,
-									text: comment.text,
-									side: comment.side,
-									like_count: comment.like_count,
-									createdAt: comment.createdAt,
-									nickname: comment.user.nickname,
+									id: elComment.id,
+									text: elComment.text,
+									side: elComment.side,
+									like_count: elComment.like_count,
+									createdAt: elComment.createdAt,
+									nickname: elComment.user.nickname,
 									isLike: true,
 								};
 							} else {
 								return {
-									id: comment.id,
-									text: comment.text,
-									side: comment.side,
-									like_count: comment.like_count,
-									createdAt: comment.createdAt,
-									nickname: comment.user.nickname,
+									id: elComment.id,
+									text: elComment.text,
+									side: elComment.side,
+									like_count: elComment.like_count,
+									createdAt: elComment.createdAt,
+									nickname: elComment.user.nickname,
 									isLike: false,
 								};
 							}
