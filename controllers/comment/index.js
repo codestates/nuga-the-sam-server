@@ -63,7 +63,28 @@ module.exports = {
 	//댓글 삭제
 	//PUT/fights/:fight_id/comments/:comment_id/delete
 	del_comment: async (req, res) => {
-		res.send();
+		if (req.headers.authorization) {
+			jwt.verify(
+				req.headers.authorization.split(" ")[1],
+				process.env.ACCESS_SECRET,
+				async (err, tokenData) => {
+					if (err) {
+						res.status(403).json({ message: "invalid token" });
+					} else {
+						try {
+							await comment.destroy({
+								where: { id: req.params.comment_id, user_id: tokenData.id },
+							});
+							res.status(200).end();
+						} catch {
+							res.status(401).json({ message: "unauthorized" });
+						}
+					}
+				},
+			);
+		} else {
+			res.status(403).json({ message: "invalid token" });
+		}
 	},
 	//댓글 추천
 	//PUT/fights/:fight_id/comments/:comment_id/like
