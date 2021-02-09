@@ -1,4 +1,4 @@
-const { comment } = require("../../models");
+const { comment, users_comments_like } = require("../../models");
 const jwt = require("jsonwebtoken");
 const user = require("../user");
 
@@ -97,6 +97,26 @@ module.exports = {
 					if (err) {
 						res.status(403).json({ message: "invalid token" });
 					} else {
+						const isLike = await users_comments_like.findOne({
+							where: {
+								user_id: tokenData.id,
+								comment_id: req.params.comment_id,
+							},
+						});
+						if (isLike) {
+							res.status(409).json({ message: "already like" });
+						} else {
+							await users_comments_like.create({
+								user_id: tokenData.id,
+								comment_id: req.params.comment_id,
+							});
+							const likeComment = await comment.findOne({
+								where: { id: req.params.comment_id },
+							});
+							likeComment.like_count++;
+							await likeComment.save();
+							res.status(200).json();
+						}
 					}
 				},
 			);
