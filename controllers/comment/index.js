@@ -32,7 +32,7 @@ module.exports = {
 	//댓글 수정
 	//PUT/fights/:fight_id/comments/:comment_id/modify
 	mod_comment: async (req, res) => {
-		console.log(req.headers.authorization,11111111111)
+		console.log(req.headers.authorization, 11111111111);
 		if (req.headers.authorization) {
 			jwt.verify(
 				req.headers.authorization.split(" ")[1],
