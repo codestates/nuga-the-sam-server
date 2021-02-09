@@ -241,7 +241,7 @@ module.exports = {
 								where: { fight_id: req.params.fight_id },
 							});
 							console.log(voteFight, "put_vote_left-5");
-							voteFight.visits++;
+							voteFight.left_vote_count++;
 							await voteFight.save();
 							const voteLog = await users_fights_vote.create({
 								user_id: tokenData.id,
@@ -283,7 +283,7 @@ module.exports = {
 								where: { fight_id: req.params.fight_id },
 							});
 							console.log(voteFight, "put_vote_right-5");
-							voteFight.visits++;
+							voteFight.right_vote_count++;
 							await voteFight.save();
 							const voteLog = await users_fights_vote.create({
 								user_id: tokenData.id,
