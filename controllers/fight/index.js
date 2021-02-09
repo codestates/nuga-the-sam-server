@@ -50,6 +50,7 @@ module.exports = {
 	get_fight: async (req, res) => {
 		//토큰이 있는경우
 		if (req.headers.authorization) {
+			const accessToken = req.headers.authorization.split(" ")[1];
 			jwt.verify(
 				accessToken,
 				process.env.ACCESS_SECRET,
