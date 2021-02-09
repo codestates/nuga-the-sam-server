@@ -237,7 +237,7 @@ module.exports = {
 							res.status(409).json({ message: "aleady voted" });
 						} else {
 							const voteFight = await fight.findOne({
-								where: { fight_id: req.params.fight_id },
+								where: { id: req.params.fight_id },
 							});
 							console.log(voteFight, "put_vote_left-5");
 							voteFight.left_vote_count++;
@@ -279,7 +279,7 @@ module.exports = {
 							res.status(409).json({ message: "aleady voted" });
 						} else {
 							const voteFight = await fight.findOne({
-								where: { fight_id: req.params.fight_id },
+								where: { id: req.params.fight_id },
 							});
 							console.log(voteFight, "put_vote_right-5");
 							voteFight.right_vote_count++;
