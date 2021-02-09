@@ -49,7 +49,9 @@ module.exports = {
 	//GET/fights/:fight_id
 	get_fight: async (req, res) => {
 		//토큰이 있는경우
+		console.log(req.headers.authorization);
 		if (req.headers.authorization) {
+			console.log(req.headers.authorization);
 			const accessToken = req.headers.authorization.split(" ")[1];
 			jwt.verify(
 				accessToken,
@@ -114,7 +116,7 @@ module.exports = {
 						//fight_id에 해당하는 comments를 불러온다
 						//
 						const comments = await comment.findAll({
-							where: { fight_id: req.param.fight_id },
+							where: { fight_id: req.params.fight_id },
 							include: [
 								{
 									model: user,
@@ -122,7 +124,36 @@ module.exports = {
 								},
 							],
 						});
-						console.log(5);
+						console.log("4 - 1");
+						const resComments = await Promise.all(
+							comments.map(async (elComment) => {
+								const isLike = await users_comments_like.findOne({
+									where: { comment_id: elComment.id, user_id: tokenData.id },
+								});
+								if (isLike) {
+									return {
+										id: elComment.id,
+										text: elComment.text,
+										side: elComment.side,
+										like_count: elComment.like_count,
+										createdAt: elComment.createdAt,
+										user: { nickname: elComment.user.nickname },
+										isLike: true,
+									};
+								} else {
+									return {
+										id: elComment.id,
+										text: elComment.text,
+										side: elComment.side,
+										like_count: elComment.like_count,
+										createdAt: elComment.createdAt,
+										user: { nickname: elComment.user.nickname },
+										isLike: false,
+									};
+								}
+							}),
+						);
+						console.log(resComments, 5);
 						paramFight.visits++;
 						await paramFight.save();
 						res.status(200).json({
@@ -135,31 +166,8 @@ module.exports = {
 							visits: paramFight.visits,
 							createdAt: paramFight.createdAt,
 							nickname: paramFight.user.nickname,
-							comments: comments.map(async (comment) => {
-								const isLike = await users_comments_like.findOne({
-									where: { comment_id: comment.id, user_id: tokenData.id },
-								});
-								if (isLike) {
-									return {
-										id: comment.id,
-										text: comment.text,
-										side: comment.side,
-										like_count: comment.like_count,
-										createdAt: comment.createdAt,
-										isLike: true,
-									};
-								} else {
-									return {
-										id: comment.id,
-										text: comment.text,
-										side: comment.side,
-										like_count: comment.like_count,
-										createdAt: comment.createdAt,
-										isLike: false,
-									};
-								}
-							}),
-							vote_where: vote_where.vote_where,
+							comments: resComments,
+							vote_where: vote_where ? vote_where.vote_where : null,
 						});
 					}
 				},
@@ -204,8 +212,6 @@ module.exports = {
 				comments,
 			});
 		}
-
-		res.send();
 	},
 	//특정 카테고리에 해당하는 fight만 보내줌
 	//GET/fights/category/:category
@@ -237,7 +243,7 @@ module.exports = {
 							res.status(409).json({ message: "aleady voted" });
 						} else {
 							const voteFight = await fight.findOne({
-								where: { fight_id: req.params.fight_id },
+								where: { id: req.params.fight_id },
 							});
 							console.log(voteFight, "put_vote_left-5");
 							voteFight.left_vote_count++;
@@ -279,7 +285,7 @@ module.exports = {
 							res.status(409).json({ message: "aleady voted" });
 						} else {
 							const voteFight = await fight.findOne({
-								where: { fight_id: req.params.fight_id },
+								where: { id: req.params.fight_id },
 							});
 							console.log(voteFight, "put_vote_right-5");
 							voteFight.right_vote_count++;
