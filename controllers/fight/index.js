@@ -126,10 +126,11 @@ module.exports = {
 						});
 						console.log("4 - 1");
 						const resComments = comments.map(async (elComment) => {
-							const isLike = await users_comments_like.findOne({
-								where: { comment_id: elComment.id, user_id: tokenData.id },
-							});
-							if (isLike) {
+							try {
+								await users_comments_like.findOne({
+									where: { comment_id: elComment.id, user_id: tokenData.id },
+								});
+
 								return {
 									id: elComment.id,
 									text: elComment.text,
@@ -139,7 +140,7 @@ module.exports = {
 									nickname: elComment.user.nickname,
 									isLike: true,
 								};
-							} else {
+							} catch {
 								return {
 									id: elComment.id,
 									text: elComment.text,
