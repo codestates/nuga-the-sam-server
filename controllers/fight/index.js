@@ -125,33 +125,35 @@ module.exports = {
 							],
 						});
 						console.log("4 - 1");
-						const resComments = comments.map(async (elComment) => {
-							try {
-								await users_comments_like.findOne({
-									where: { comment_id: elComment.id, user_id: tokenData.id },
-								});
+						const resComments = await Promise.all(
+							comments.map(async (elComment) => {
+								try {
+									await users_comments_like.findOne({
+										where: { comment_id: elComment.id, user_id: tokenData.id },
+									});
 
-								return {
-									id: elComment.id,
-									text: elComment.text,
-									side: elComment.side,
-									like_count: elComment.like_count,
-									createdAt: elComment.createdAt,
-									nickname: elComment.user.nickname,
-									isLike: true,
-								};
-							} catch {
-								return {
-									id: elComment.id,
-									text: elComment.text,
-									side: elComment.side,
-									like_count: elComment.like_count,
-									createdAt: elComment.createdAt,
-									nickname: elComment.user.nickname,
-									isLike: false,
-								};
-							}
-						});
+									return {
+										id: elComment.id,
+										text: elComment.text,
+										side: elComment.side,
+										like_count: elComment.like_count,
+										createdAt: elComment.createdAt,
+										nickname: elComment.user.nickname,
+										isLike: true,
+									};
+								} catch {
+									return {
+										id: elComment.id,
+										text: elComment.text,
+										side: elComment.side,
+										like_count: elComment.like_count,
+										createdAt: elComment.createdAt,
+										nickname: elComment.user.nickname,
+										isLike: false,
+									};
+								}
+							}),
+						);
 						console.log(resComments, 5);
 						paramFight.visits++;
 						await paramFight.save();
