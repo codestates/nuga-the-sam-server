@@ -49,7 +49,9 @@ module.exports = {
 	//GET/fights/:fight_id
 	get_fight: async (req, res) => {
 		//토큰이 있는경우
+		console.log(req.headers.authorization)
 		if (req.headers.authorization) {
+			console.log(req.headers.authorization)
 			const accessToken = req.headers.authorization.split(" ")[1];
 			jwt.verify(
 				accessToken,
@@ -114,7 +116,7 @@ module.exports = {
 						//fight_id에 해당하는 comments를 불러온다
 						//
 						const comments = await comment.findAll({
-							where: { fight_id: req.param.fight_id },
+							where: { fight_id: req.params.fight_id },
 							include: [
 								{
 									model: user,
@@ -205,7 +207,6 @@ module.exports = {
 			});
 		}
 
-		res.send();
 	},
 	//특정 카테고리에 해당하는 fight만 보내줌
 	//GET/fights/category/:category
