@@ -63,6 +63,7 @@ module.exports = {
 	//댓글 삭제
 	//PUT/fights/:fight_id/comments/:comment_id/delete
 	del_comment: async (req, res) => {
+		console.log(req.headers.authorization,1212121212121)
 		if (req.headers.authorization) {
 			jwt.verify(
 				req.headers.authorization.split(" ")[1],
