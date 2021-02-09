@@ -6,7 +6,6 @@ const {
 	users_comments_like,
 } = require("../../models");
 const jwt = require("jsonwebtoken");
-const { where } = require("sequelize/types");
 require("dotenv").config();
 
 module.exports = {
