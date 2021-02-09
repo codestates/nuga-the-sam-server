@@ -73,6 +73,9 @@ module.exports = {
 						res.status(403).json({ message: "invalid token" });
 					} else {
 						try {
+							await users_comments_like.destroy({
+								where: { user_id: tokenData.id, comment_id: req.params.comment_id }
+							})
 							await comment.destroy({
 								where: { id: req.params.comment_id, user_id: tokenData.id },
 							});
