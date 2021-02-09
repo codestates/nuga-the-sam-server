@@ -78,6 +78,8 @@ module.exports = {
 							where: { fight_id: req.params.fight_id },
 						});
 						console.log(2);
+						result.visits++;
+						await result.save();
 						res.status(205).json({
 							id: result.id,
 							category: result.category,
@@ -120,6 +122,8 @@ module.exports = {
 							],
 						});
 						console.log(5);
+						paramFight.visits++;
+						await paramFight.save();
 						res.status(200).json({
 							id: paramFight.id,
 							category: paramFight.category,
@@ -184,6 +188,8 @@ module.exports = {
 				where: { fight_id: req.params.fight_id },
 			});
 			console.log(8);
+			result.visits++;
+			await result.save();
 			res.status(205).json({
 				id: result.id,
 				category: result.category,
