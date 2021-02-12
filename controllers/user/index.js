@@ -127,7 +127,7 @@ module.exports = {
 					client_secret: process.env.CLIENT_SECRET,
 					code: req.body.authorizationCode,
 					grant_type: "authorization_code",
-					redirect_uri: "http://localhost:3000/login",
+					redirect_uri: "https://www.nugathesam.com/login",
 				},
 				{
 					Accept: "application/json",
