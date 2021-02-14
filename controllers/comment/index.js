@@ -63,7 +63,7 @@ module.exports = {
 	//댓글 삭제
 	//PUT/fights/:fight_id/comments/:comment_id/delete
 	del_comment: async (req, res) => {
-		console.log(req.headers.authorization,1212121212121)
+		console.log(req.headers.authorization, 1212121212121);
 		if (req.headers.authorization) {
 			jwt.verify(
 				req.headers.authorization.split(" ")[1],
@@ -73,9 +73,6 @@ module.exports = {
 						res.status(403).json({ message: "invalid token" });
 					} else {
 						try {
-							await users_comments_like.destroy({
-								where: { user_id: tokenData.id, comment_id: req.params.comment_id }
-							})
 							await comment.destroy({
 								where: { id: req.params.comment_id, user_id: tokenData.id },
 							});
@@ -93,7 +90,7 @@ module.exports = {
 	//댓글 추천
 	//PUT/fights/:fight_id/comments/:comment_id/like
 	like_comment: async (req, res) => {
-		console.log(req.headers.authorization)
+		console.log(req.headers.authorization);
 		if (req.headers.authorization) {
 			jwt.verify(
 				req.headers.authorization.split(" ")[1],
