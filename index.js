@@ -17,11 +17,7 @@ server.engine("html", require("ejs").renderFile);
 
 server.use(
 	cors({
-		origin: [
-			"http://127.0.0.1:3000",
-			"http://localhost:3000",
-			"https://www.nugathesam.com",
-		],
+		origin: ["https://www.nugathesam.com"],
 		methods: ["GET", "POST", "PUT", "OPTIONS"],
 	}),
 );
